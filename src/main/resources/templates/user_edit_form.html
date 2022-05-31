@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit</title>
+</head>
+<body>
+<form method="post" th:action="@{/user/edit}">
+    Data to be changed: <br/>
+    First name: <input type="text" name="firstName"><br/>
+    Last name: <input type="text" name="lastName"><br/>
+
+    Confirm your identity to change:
+    Username: <input type="text" name="username"><br/>
+    Password: <input type="password" name="password"><br/>
+    <input type="submit" value="Send">
+</form>
+</body>
+</html>
