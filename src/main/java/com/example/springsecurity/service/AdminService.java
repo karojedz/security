@@ -1,6 +1,6 @@
 package com.example.springsecurity.service;
 
-import com.example.springsecurity.model.User;
+import com.example.springsecurity.model.UserDto;
 import com.example.springsecurity.model.UserForm;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +13,7 @@ public class AdminService {
         this.userService = userService;
     }
 
-    public User editUser(UserForm userForm) {
+    public UserDto editUser(UserForm userForm) {
         return userService.adminEdit(userForm);
     }
 }

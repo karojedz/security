@@ -1,11 +1,10 @@
 package com.example.springsecurity.service;
 
-import com.example.springsecurity.model.Person;
-import com.example.springsecurity.model.User;
-import com.example.springsecurity.model.UserForm;
-import com.example.springsecurity.model.UserRole;
+import com.example.springsecurity.mapper.UserMapper;
+import com.example.springsecurity.model.*;
 import com.example.springsecurity.repository.UserRepository;
 import com.example.springsecurity.repository.UserRoleRepository;
+import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,6 +17,7 @@ public class UserService {
     private UserRoleRepository userRoleRepository;
     private PasswordEncoder passwordEncoder;
     private static final String ROLE_USER = "ROLE_USER";
+    private final UserMapper mapper = Mappers.getMapper(UserMapper.class);
 
     @Autowired
     UserService(UserRepository userRepository, UserRoleRepository userRoleRepository, PasswordEncoder passwordEncoder) {
@@ -26,7 +26,7 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public void save(UserForm userForm) {
+    public UserRole save(UserForm userForm) {
         Person person = new Person();
         User user = new User();
         UserRole userRole = new UserRole();
@@ -42,13 +42,13 @@ public class UserService {
 
         userRole.setUsername(userForm.getUsername());
         userRole.setRole(ROLE_USER);
-        userRoleRepository.save(userRole);
+        return userRoleRepository.save(userRole);
     }
 
-    public User adminEdit(UserForm userForm) {
+    public UserDto adminEdit(UserForm userForm) {
         if (userRepository.existsById(userForm.getId())) {
             User user = userRepository.getById(userForm.getId());
-            return updateUser(userForm, user);
+            return mapper.mapToUserDto(updateUser(userForm, user));
         }
         return null;
     }
@@ -60,9 +60,9 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User userEdit(UserForm userForm) {
+    public UserDto userEdit(UserForm userForm) {
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.getByUsername(name);
-        return updateUser(userForm, user);
+        return mapper.mapToUserDto(updateUser(userForm, user));
     }
 }

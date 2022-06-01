@@ -1,6 +1,7 @@
 package com.example.springsecurity.controller;
 
 import com.example.springsecurity.model.User;
+import com.example.springsecurity.model.UserDto;
 import com.example.springsecurity.model.UserForm;
 import com.example.springsecurity.service.UserService;
 import org.springframework.stereotype.Controller;
@@ -24,7 +25,7 @@ public class UserController {
 
     @PostMapping("/user/edit")
     @ResponseBody
-    User edit(UserForm userForm) {
+    UserDto edit(UserForm userForm) {
         return userService.userEdit(userForm);
     }
 }
