@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Controller
 @RequiredArgsConstructor
@@ -20,8 +21,8 @@ public class RegistryController {
     }
 
     @PostMapping("/register")
-    String register(UserDto userDto, PersonDto personDto) {
-        userService.save(userDto, personDto);
+    String register(@RequestBody UserDto userDto) {
+        userService.save(userDto);
         return "redirect:/login";
     }
 }

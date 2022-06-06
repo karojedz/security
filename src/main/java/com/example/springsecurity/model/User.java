@@ -21,4 +21,9 @@ public class User {
     private String username;
     private String password;
     private boolean accountActivated; //ban, active, activated, timed
+
+    public void setPerson(Person person) {
+        this.person = person;
+        person.setUser(this);
+    }
 }

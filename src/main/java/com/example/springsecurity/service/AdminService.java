@@ -11,7 +11,7 @@ public class AdminService {
 
     private final UserService userService;
 
-    public UserDto editUser(UserDto userDto, PersonDto personDto) {
-        return userService.adminEdit(userDto, personDto);
+    public UserDto editUser(UserDto userDto) {
+        return userService.adminEdit(userDto);
     }
 }

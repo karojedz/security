@@ -22,7 +22,7 @@ public class Person {
     private String firstName;
     private String lastName;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JsonIgnore
     private User user;
 }

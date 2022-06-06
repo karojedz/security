@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
@@ -22,7 +23,7 @@ public class UserController {
 
     @PutMapping("/user/edit")
     @ResponseBody
-    UserDto edit(PersonDto personDto) {
-        return userService.userEdit(personDto);
+    UserDto edit(@RequestBody UserDto userDto) {
+        return userService.userEdit(userDto);
     }
 }
