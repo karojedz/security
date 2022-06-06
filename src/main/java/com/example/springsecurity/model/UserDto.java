@@ -1,5 +1,6 @@
 package com.example.springsecurity.model;
 
+import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,8 +12,11 @@ import lombok.Setter;
 @AllArgsConstructor
 public class UserDto {
 
-    private String firstName;
-    private String lastName;
+    private Long id;
+
+    @NotNull
+    private PersonDto personDto;
     private String username;
-    private boolean enabled;
+    private String password;
+    private boolean accountActivated;
 }

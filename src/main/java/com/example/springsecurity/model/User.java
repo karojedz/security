@@ -20,5 +20,5 @@ public class User {
 
     private String username;
     private String password;
-    private boolean enabled; //ban, active, activated, timed
+    private boolean accountActivated; //ban, active, activated, timed
 }

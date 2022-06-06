@@ -1,20 +1,17 @@
 package com.example.springsecurity.controller;
 
-import com.example.springsecurity.model.User;
+import com.example.springsecurity.model.PersonDto;
 import com.example.springsecurity.model.UserDto;
-import com.example.springsecurity.model.UserForm;
 import com.example.springsecurity.service.AdminService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
+@RequiredArgsConstructor
 public class AdminController {
 
     private final AdminService adminService;
-
-    AdminController(AdminService adminService) {
-        this.adminService = adminService;
-    }
 
     @GetMapping("/admin")
     @ResponseBody
@@ -27,9 +24,9 @@ public class AdminController {
         return "admin_edit_form";
     }
 
-    @PostMapping("/admin/edit")
+    @PutMapping("/admin/edit")
     @ResponseBody
-    UserDto editUser(UserForm userForm) {
-        return adminService.editUser(userForm);
+    UserDto editUser(UserDto userDto, PersonDto personDto) {
+        return adminService.editUser(userDto, personDto);
     }
 }

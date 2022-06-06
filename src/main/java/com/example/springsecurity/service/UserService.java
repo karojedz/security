@@ -4,65 +4,74 @@ import com.example.springsecurity.mapper.UserMapper;
 import com.example.springsecurity.model.*;
 import com.example.springsecurity.repository.UserRepository;
 import com.example.springsecurity.repository.UserRoleRepository;
+import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
-    private UserRepository userRepository;
-    private UserRoleRepository userRoleRepository;
-    private PasswordEncoder passwordEncoder;
-    private static final String ROLE_USER = "ROLE_USER";
+    private final UserRepository userRepository;
+    private final UserRoleRepository userRoleRepository;
+    private final PasswordEncoder passwordEncoder;
     private final UserMapper mapper = Mappers.getMapper(UserMapper.class);
 
-    @Autowired
-    UserService(UserRepository userRepository, UserRoleRepository userRoleRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.userRoleRepository = userRoleRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
-
-    public UserRole save(UserForm userForm) {
+    public UserRole save(UserDto userDto, PersonDto personDto) {
         Person person = new Person();
         User user = new User();
         UserRole userRole = new UserRole();
-
-        person.setFirstName(userForm.getFirstName());
-        person.setLastName(userForm.getLastName());
-        person.setUser(user);
-        user.setPerson(person);
-        user.setUsername(userForm.getUsername());
-        user.setPassword(passwordEncoder.encode(userForm.getPassword()));
-        user.setEnabled(true);
+        fillPersonData(person, user, personDto);
+        fillUserData(user, person, userDto);
+        fillUserRoleData(userRole, userDto);
         userRepository.save(user);
-
-        userRole.setUsername(userForm.getUsername());
-        userRole.setRole(ROLE_USER);
         return userRoleRepository.save(userRole);
     }
 
-    public UserDto adminEdit(UserForm userForm) {
-        if (userRepository.existsById(userForm.getId())) {
-            User user = userRepository.getById(userForm.getId());
-            return mapper.mapToUserDto(updateUser(userForm, user));
+    private boolean fillPersonData(Person person, User user, PersonDto personDto) {
+        person.setFirstName(personDto.getFirstName());
+        person.setLastName(personDto.getLastName());
+        person.setUser(user);
+        return true;
+    }
+
+    private boolean fillUserData(User user, Person person, UserDto userDto) {
+        user.setPerson(person);
+        user.setUsername(userDto.getUsername());
+        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        user.setAccountActivated(true);
+        return true;
+    }
+
+    private boolean fillUserRoleData(UserRole userRole, UserDto userDto) {
+        userRole.setUsername(userDto.getUsername());
+        userRole.setRole(Role.ROLE_USER);
+        return true;
+    }
+
+    public UserDto adminEdit(UserDto userDto, PersonDto personDto) {
+        if (userRepository.existsById(userDto.getId())) {
+            User user = userRepository.getById(userDto.getId());
+            user = updateUser(personDto, user.getPerson());
+            User saved = userRepository.save(user);
+            return mapper.mapToUserDto(saved);
         }
         return null;
     }
 
-    private User updateUser(UserForm userForm, User user) {
-        Person person = user.getPerson();
-        person.setFirstName(userForm.getFirstName());
-        person.setLastName(userForm.getLastName());
-        return userRepository.save(user);
+    private User updateUser(PersonDto personDto, Person person) {
+        person.setFirstName(personDto.getFirstName());
+        person.setLastName(personDto.getLastName());
+        return person.getUser();
     }
 
-    public UserDto userEdit(UserForm userForm) {
-        String name = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.getByUsername(name);
-        return mapper.mapToUserDto(updateUser(userForm, user));
+    public UserDto userEdit(PersonDto personDto) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.getByUsername(username);
+        user = updateUser(personDto, user.getPerson());
+        User saved = userRepository.save(user);
+        return mapper.mapToUserDto(saved);
     }
 }

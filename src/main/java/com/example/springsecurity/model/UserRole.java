@@ -5,10 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 @Setter
@@ -22,5 +19,7 @@ public class UserRole {
     private Long id;
 
     private String username;
-    private String role;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
 }

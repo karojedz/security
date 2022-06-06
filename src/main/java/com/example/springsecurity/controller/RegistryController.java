@@ -1,22 +1,18 @@
 package com.example.springsecurity.controller;
 
-import com.example.springsecurity.model.UserForm;
+import com.example.springsecurity.model.PersonDto;
+import com.example.springsecurity.model.UserDto;
 import com.example.springsecurity.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
+@RequiredArgsConstructor
 public class RegistryController {
 
-    private UserService userService;
-
-    @Autowired
-    RegistryController(UserService userService) {
-        this.userService = userService;
-    }
+    private final UserService userService;
 
     @GetMapping("/register")
     String signIn() {
@@ -24,8 +20,8 @@ public class RegistryController {
     }
 
     @PostMapping("/register")
-    String register(UserForm userForm) {
-        userService.save(userForm);
+    String register(UserDto userDto, PersonDto personDto) {
+        userService.save(userDto, personDto);
         return "redirect:/login";
     }
 }

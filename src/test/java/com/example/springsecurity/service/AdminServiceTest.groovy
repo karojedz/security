@@ -1,7 +1,7 @@
 package com.example.springsecurity.service
 
+import com.example.springsecurity.model.PersonDto
 import com.example.springsecurity.model.UserDto
-import com.example.springsecurity.model.UserForm
 import spock.lang.Specification
 
 class AdminServiceTest extends Specification {
@@ -15,9 +15,10 @@ class AdminServiceTest extends Specification {
     final String LAST_NAME = "lastName"
     final String USERNAME = "username"
     final String PASSWORD = "password"
-    final boolean ENABLED = true
+    final boolean ACCOUNT_ACTIVATED = true
 
-    UserForm userForm = new UserForm(ID, FIRST_NAME, LAST_NAME, USERNAME, PASSWORD)
+    PersonDto personDto = new PersonDto(FIRST_NAME, LAST_NAME)
+    UserDto userDto = new UserDto(ID, personDto, USERNAME, PASSWORD, ACCOUNT_ACTIVATED)
 
     def setup() {
         adminService = new AdminService(userService)
@@ -25,12 +26,12 @@ class AdminServiceTest extends Specification {
 
     def "should invoke an adminEdit method from UserService"() {
         given:
-        UserDto expected = new UserDto(FIRST_NAME, LAST_NAME, USERNAME, ENABLED)
+        userService.adminEdit(userDto, personDto) >> userDto
 
-        and:
-        userService.adminEdit(userForm) >> expected
+        when:
+        adminService.editUser(userDto, personDto)
 
-        expect:
-        expected == adminService.editUser(userForm)
+        then:
+        1 * userService.adminEdit(userDto, personDto)
     }
 }

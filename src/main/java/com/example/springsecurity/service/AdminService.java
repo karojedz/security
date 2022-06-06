@@ -1,19 +1,17 @@
 package com.example.springsecurity.service;
 
+import com.example.springsecurity.model.PersonDto;
 import com.example.springsecurity.model.UserDto;
-import com.example.springsecurity.model.UserForm;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class AdminService {
 
     private final UserService userService;
 
-    AdminService(UserService userService) {
-        this.userService = userService;
-    }
-
-    public UserDto editUser(UserForm userForm) {
-        return userService.adminEdit(userForm);
+    public UserDto editUser(UserDto userDto, PersonDto personDto) {
+        return userService.adminEdit(userDto, personDto);
     }
 }
