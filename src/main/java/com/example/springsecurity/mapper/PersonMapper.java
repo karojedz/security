@@ -4,7 +4,7 @@ import com.example.springsecurity.model.Person;
 import com.example.springsecurity.model.PersonDto;
 import org.mapstruct.Mapper;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface PersonMapper {
 
     PersonDto mapToPersonDto(Person person);

@@ -20,8 +20,8 @@ public class RegistryController {
     }
 
     @PostMapping("/register")
-    String register(UserDto userDto, PersonDto personDto) {
-        userService.save(userDto, personDto);
+    String register(UserDto userDto) {
+        userService.save(userDto);
         return "redirect:/login";
     }
 }

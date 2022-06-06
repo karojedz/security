@@ -26,12 +26,12 @@ class AdminServiceTest extends Specification {
 
     def "should invoke an adminEdit method from UserService"() {
         given:
-        userService.adminEdit(userDto, personDto) >> userDto
+        userService.adminEdit(userDto) >> userDto
 
         when:
-        adminService.editUser(userDto, personDto)
+        adminService.editUser(userDto)
 
         then:
-        1 * userService.adminEdit(userDto, personDto)
+        1 * userService.adminEdit(userDto)
     }
 }

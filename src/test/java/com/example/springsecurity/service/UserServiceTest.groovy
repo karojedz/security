@@ -15,7 +15,7 @@ import spock.lang.Specification
 
 class UserServiceTest extends Specification {
 
-    private UserService userService;
+    private UserService userService
 
     UserRepository userRepository = Mock()
     UserRoleRepository userRoleRepository = Mock()
@@ -120,7 +120,7 @@ class UserServiceTest extends Specification {
         userRepository.save(user) >> user
 
         when:
-        userService.adminEdit(userDto, personDto)
+        userService.adminEdit(userDto)
 
         then:
         1 * userRepository.save(user)

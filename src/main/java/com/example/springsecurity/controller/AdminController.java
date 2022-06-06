@@ -26,7 +26,7 @@ public class AdminController {
 
     @PutMapping("/admin/edit")
     @ResponseBody
-    UserDto editUser(UserDto userDto, PersonDto personDto) {
-        return adminService.editUser(userDto, personDto);
+    UserDto editUser(UserDto userDto) {
+        return adminService.editUser(userDto);
     }
 }

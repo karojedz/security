@@ -22,7 +22,7 @@ public class UserController {
 
     @PutMapping("/user/edit")
     @ResponseBody
-    UserDto edit(PersonDto personDto) {
-        return userService.userEdit(personDto);
+    UserDto edit(UserDto userDto) {
+        return userService.userEdit(userDto);
     }
 }
