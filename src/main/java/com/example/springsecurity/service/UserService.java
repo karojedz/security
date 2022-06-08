@@ -22,7 +22,7 @@ public class UserService {
     public UserRole save(UserDto userDto) {
         User user = mapper.mapToUser(userDto);
         user.setPassword(encryptPassword(user));
-        UserRole userRole = createAndFillUserRole(userDto);
+        UserRole userRole = createAndFillUserRole(user);
         userRepository.save(user);
         return userRoleRepository.save(userRole);
     }
@@ -31,9 +31,9 @@ public class UserService {
         return passwordEncoder.encode(user.getPassword());
     }
 
-    private UserRole createAndFillUserRole(UserDto userDto) {
+    private UserRole createAndFillUserRole(User user) {
         UserRole userRole = new UserRole();
-        userRole.setUsername(userDto.getUsername());
+        userRole.setUsername(user.getUsername());
         userRole.setRole(Role.ROLE_USER);
         return userRole;
     }
