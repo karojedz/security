@@ -19,9 +19,8 @@ class UserServiceTest extends Specification {
 
     UserRepository userRepository = Mock()
     UserRoleRepository userRoleRepository = Mock()
-    PasswordEncoder encoder = Mock()
 
-    UserMapper mapper
+    UserMapper userMapper = Mock()
 
     final Long ID = 1L
     final String FIRST_NAME = "firstName"
@@ -33,10 +32,15 @@ class UserServiceTest extends Specification {
 
     PersonDto personDto = new PersonDto(FIRST_NAME, LAST_NAME)
     UserDto userDto = new UserDto(ID, personDto, USERNAME, PASSWORD, ACCOUNT_ACTIVATED)
+    Person person = new Person()
+    User user = new User(ID, person, USERNAME, PASSWORD, ACCOUNT_ACTIVATED)
 
     def setup() {
-        userService = new UserService(userRepository, userRoleRepository, encoder)
-        mapper = Mappers.getMapper(UserMapper.class)
+        userService = new UserService(userRepository, userRoleRepository, userMapper)
+        person.setId(ID)
+        person.setFirstName(FIRST_NAME)
+        person.setLastName(LAST_NAME)
+        person.setUser(user)
     }
 
     def "should receive userDto and save a user"() {
@@ -46,7 +50,7 @@ class UserServiceTest extends Specification {
         UserRole userRole = new UserRole(ID, USERNAME, ROLE)
 
         and:
-        encoder.encode(PASSWORD) >> PASSWORD
+        userMapper.mapToUser(_) >> user
         userRepository.save(user) >> user
         userRoleRepository.save(userRole) >> userRole
 
@@ -58,49 +62,11 @@ class UserServiceTest extends Specification {
         1 * userRoleRepository.save(_)
     }
 
-    def "should fill person with data"() {
-        given:
-        Person person = new Person()
-        User user = new User()
-
+    def "should create userRole"() {
         when:
-        boolean filled = userService.fillPersonData(person, user, userDto)
+        UserRole userRole = userService.createAndFillUserRole(user)
 
         then:
-        filled
-        person.getFirstName() == FIRST_NAME
-        person.getLastName() == LAST_NAME
-        person.getUser() == user
-    }
-
-    def "should fill user with data"() {
-        given:
-        Person person = new Person()
-        User user = new User()
-
-        and:
-        encoder.encode(PASSWORD) >> PASSWORD
-
-        when:
-        boolean filled = userService.fillUserData(user, person, userDto)
-
-        then:
-        filled
-        user.getPerson() == person
-        user.getUsername() == USERNAME
-        user.getPassword() == PASSWORD
-        user.isAccountActivated()
-    }
-
-    def "should fill userRole with data"() {
-        given:
-        UserRole userRole = new UserRole()
-
-        when:
-        boolean filled = userService.fillUserRoleData(userRole, userDto)
-
-        then:
-        filled
         userRole.getUsername() == USERNAME
         userRole.getRole() == ROLE
     }
@@ -118,6 +84,7 @@ class UserServiceTest extends Specification {
         userRepository.existsById(ID) >> true
         userRepository.getById(_) >> user
         userRepository.save(user) >> user
+        userMapper.mapToUserDto(_) >> userDto
 
         when:
         userService.adminEdit(userDto)
@@ -127,6 +94,10 @@ class UserServiceTest extends Specification {
     }
 
     def "should edit user's name by username - user version"() {
+        /*
+        // nie przechodzi, bo nie wiem jak testować metodę
+        // pobierającą dane autoryzowanego użytkownika
+        */
         given:
         User user = new User()
         user.setUsername(USERNAME)
@@ -139,6 +110,7 @@ class UserServiceTest extends Specification {
         and:
         userRepository.getByUsername(_) >> user
         userRepository.save(user) >> user
+        userMapper.mapToUserDto(_) >> userDto
 
         when:
         userService.userEdit(userDto)
