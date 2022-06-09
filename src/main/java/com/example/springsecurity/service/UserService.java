@@ -5,9 +5,7 @@ import com.example.springsecurity.model.*;
 import com.example.springsecurity.repository.UserRepository;
 import com.example.springsecurity.repository.UserRoleRepository;
 import lombok.RequiredArgsConstructor;
-import org.mapstruct.factory.Mappers;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -16,19 +14,13 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final UserRoleRepository userRoleRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final UserMapper mapper = Mappers.getMapper(UserMapper.class);
+    private final UserMapper userMapper;
 
     public UserRole save(UserDto userDto) {
-        User user = mapper.mapToUser(userDto);
-        user.setPassword(encryptPassword(user));
+        User user = userMapper.mapToUser(userDto);
         UserRole userRole = createAndFillUserRole(user);
         userRepository.save(user);
         return userRoleRepository.save(userRole);
-    }
-
-    private String encryptPassword(User user) {
-        return passwordEncoder.encode(user.getPassword());
     }
 
     private UserRole createAndFillUserRole(User user) {
@@ -43,7 +35,7 @@ public class UserService {
             User user = userRepository.getById(userDto.getId());
             user = updateUser(userDto, user.getPerson());
             User saved = userRepository.save(user);
-            return mapper.mapToUserDto(saved);
+            return userMapper.mapToUserDto(saved);
         }
         return null;
     }
@@ -59,6 +51,6 @@ public class UserService {
         User user = userRepository.getByUsername(username);
         user = updateUser(userDto, user.getPerson());
         User saved = userRepository.save(user);
-        return mapper.mapToUserDto(saved);
+        return userMapper.mapToUserDto(saved);
     }
 }
